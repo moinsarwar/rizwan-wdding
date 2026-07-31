@@ -78,7 +78,7 @@ try {
             jsonResponse(['ok' => false, 'error' => 'Reply cannot be empty.'], 422);
         }
 
-        if (mb_strlen($reply) > 2000) {
+        if (strlen($reply) > 2000) {
             jsonResponse(['ok' => false, 'error' => 'Reply is too long.'], 422);
         }
 

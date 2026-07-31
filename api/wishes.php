@@ -39,11 +39,11 @@ try {
             jsonResponse(['ok' => false, 'error' => 'Name and message are required.'], 422);
         }
 
-        if (mb_strlen($name) > 120) {
+        if (strlen($name) > 120) {
             jsonResponse(['ok' => false, 'error' => 'Name is too long.'], 422);
         }
 
-        if (mb_strlen($message) > 2000) {
+        if (strlen($message) > 2000) {
             jsonResponse(['ok' => false, 'error' => 'Message is too long.'], 422);
         }
 
@@ -80,6 +80,7 @@ try {
 
     jsonResponse(['ok' => false, 'error' => 'Method not allowed.'], 405);
 } catch (Throwable $e) {
+    error_log('[rizwan-wishes] ' . $e->getMessage());
     jsonResponse([
         'ok' => false,
         'error' => 'Server error. Please check database settings.',
