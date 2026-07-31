@@ -54,6 +54,15 @@ h1 {
   padding: 1.5rem;
 }
 
+.login-view[hidden],
+#dashboard-view[hidden] {
+  display: none !important;
+}
+
+.dashboard:not([hidden]) {
+  display: block;
+}
+
 .login-card {
   width: min(400px, 100%);
   display: grid;

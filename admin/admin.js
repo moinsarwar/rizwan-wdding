@@ -1,4 +1,4 @@
-const API = "../api/admin.php";
+const API = "/api/admin.php";
 
 let wishes = [];
 let filter = "all";
@@ -12,21 +12,29 @@ const stats = document.getElementById("stats");
 
 async function api(action, options = {}) {
   const url = action ? `${API}?action=${encodeURIComponent(action)}` : API;
+  const { headers: extraHeaders, ...rest } = options;
+
   const res = await fetch(url, {
+    ...rest,
     credentials: "same-origin",
     headers: {
       "Content-Type": "application/json",
-      ...(options.headers || {}),
+      Accept: "application/json",
+      ...(extraHeaders || {}),
     },
-    ...options,
   });
 
-  const data = await res.json().catch(() => ({ ok: false, error: "Invalid response" }));
+  const data = await res.json().catch(() => ({
+    ok: false,
+    error: "Invalid response",
+  }));
+
   if (!res.ok || data.ok === false) {
     const error = new Error(data.error || "Request failed");
     error.status = res.status;
     throw error;
   }
+
   return data;
 }
 
@@ -47,22 +55,26 @@ function rsvpLabel(value) {
 
 function formatDate(value) {
   if (!value) return "";
-  const d = new Date(value.replace(" ", "T"));
-  if (Number.isNaN(d.getTime())) return value;
-  return d.toLocaleString("en-PK", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  const d = new Date(String(value).replace(" ", "T"));
+  if (Number.isNaN(d.getTime())) return String(value);
+  try {
+    return d.toLocaleString("en-PK", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+  } catch {
+    return d.toLocaleString();
+  }
 }
 
 function showLogin() {
-  loginView.hidden = false;
-  dashboardView.hidden = true;
+  loginView?.removeAttribute("hidden");
+  dashboardView?.setAttribute("hidden", "");
 }
 
 function showDashboard() {
-  loginView.hidden = true;
-  dashboardView.hidden = false;
+  loginView?.setAttribute("hidden", "");
+  dashboardView?.removeAttribute("hidden");
 }
 
 function filteredWishes() {
@@ -78,7 +90,11 @@ function filteredWishes() {
 function renderBoard() {
   const list = filteredWishes();
   const pending = wishes.filter((w) => !w.reply).length;
-  stats.textContent = `${wishes.length} wishes · ${pending} pending`;
+  if (stats) {
+    stats.textContent = `${wishes.length} wishes · ${pending} pending`;
+  }
+
+  if (!board) return;
 
   if (!list.length) {
     board.innerHTML = `<p class="empty">No wishes in this filter.</p>`;
@@ -130,23 +146,31 @@ async function loadWishes() {
 
 loginForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  loginError.hidden = true;
+  if (loginError) loginError.hidden = true;
 
-  const form = e.currentTarget;
+  const username = loginForm.username.value.trim();
+  const password = loginForm.password.value;
+
   try {
     await api("login", {
       method: "POST",
-      body: JSON.stringify({
-        username: form.username.value.trim(),
-        password: form.password.value,
-      }),
+      body: JSON.stringify({ username, password }),
     });
-    form.reset();
+    loginForm.reset();
     showDashboard();
-    await loadWishes();
+    try {
+      await loadWishes();
+    } catch (listErr) {
+      if (board) {
+        board.innerHTML = `<p class="empty">${escapeHtml(listErr.message || "Could not load wishes")}</p>`;
+      }
+    }
   } catch (err) {
-    loginError.hidden = false;
-    loginError.textContent = err.message || "Login failed";
+    showLogin();
+    if (loginError) {
+      loginError.hidden = false;
+      loginError.textContent = err.message || "Login failed";
+    }
   }
 });
 
