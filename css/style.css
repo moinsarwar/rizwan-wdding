@@ -172,22 +172,31 @@ textarea {
 
 .cover__names {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
   font-family: var(--font-display);
   font-size: clamp(3.2rem, 10vw, 5.5rem);
   font-weight: 400;
-  line-height: 1.15;
+  line-height: 1.1;
   color: var(--white);
 }
 
-.cover__names span {
-  display: inline-block;
+.cover__name {
+  display: block;
+}
+
+.cover__weds {
+  display: block;
   font-family: var(--font-heading);
-  font-size: 0.38em;
+  font-size: 0.32em;
   font-style: italic;
   color: var(--gold-soft);
-  margin: 0 0.25em;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.28em;
   text-transform: lowercase;
+  line-height: 1;
+  margin: 0.2rem 0;
 }
 
 .cover__to {
