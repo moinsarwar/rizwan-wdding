@@ -83,7 +83,7 @@ function showDashboard() {
 function whatsappUrl(guestName, inviteUrl) {
   const text =
     `Assalamu Alaikum ${guestName},\n\n` +
-    `You are invited to the Walima of Rizwan & Ayesha.\n` +
+    `You are invited to the Reception of Rizwan & Ayesha.\n` +
     `Please open your invitation:\n${inviteUrl}`;
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
