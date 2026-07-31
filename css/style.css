@@ -182,10 +182,12 @@ textarea {
 .cover__names span {
   display: inline-block;
   font-family: var(--font-heading);
-  font-size: 0.45em;
+  font-size: 0.38em;
   font-style: italic;
   color: var(--gold-soft);
-  margin: 0 0.15em;
+  margin: 0 0.25em;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
 }
 
 .cover__to {

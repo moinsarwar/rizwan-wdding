@@ -140,85 +140,9 @@ function setupReveal() {
   items.forEach((el) => observer.observe(el));
 }
 
-function rsvpLabel(value) {
-  if (value === "attending") return "Attending";
-  if (value === "maybe") return "Hopefully";
-  return "Unable to attend";
-}
-
-function formatWishDate(value) {
-  if (!value) return "";
-  const d = new Date(String(value).replace(" ", "T"));
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-PK", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-async function fetchWishes() {
-  const res = await fetch("api/wishes.php", {
-    headers: { Accept: "application/json" },
-  });
-  const data = await res.json();
-  if (!res.ok || !data.ok) {
-    throw new Error(data.error || "Could not load wishes");
-  }
-  return data.data || [];
-}
-
-function renderWishes(wishes) {
-  const listEl = document.getElementById("wishes-list");
-  if (!listEl) return;
-
-  if (!wishes.length) {
-    listEl.innerHTML = `<p class="wish-empty">Be the first to leave a wish.</p>`;
-    return;
-  }
-
-  listEl.innerHTML = wishes
-    .map(
-      (w) => `
-      <article class="wish-card">
-        <div class="wish-card__meta">
-          <span class="wish-card__name">${escapeHtml(w.name)}</span>
-          <span>${rsvpLabel(w.rsvp)} · ${w.guests} guest${Number(w.guests) > 1 ? "s" : ""} · ${escapeHtml(formatWishDate(w.created_at))}</span>
-        </div>
-        <p>${escapeHtml(w.message)}</p>
-        ${
-          w.reply
-            ? `<p class="wish-card__reply"><span>Couple's reply</span>${escapeHtml(w.reply)}</p>`
-            : ""
-        }
-      </article>`
-    )
-    .join("");
-}
-
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
 function setupWishes() {
   const form = document.getElementById("wish-form");
   const note = document.getElementById("form-note");
-
-  const load = async () => {
-    try {
-      const wishes = await fetchWishes();
-      renderWishes(wishes);
-    } catch {
-      renderWishes([]);
-    }
-  };
-
-  load();
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -257,7 +181,6 @@ function setupWishes() {
 
       form.reset();
       form.guests.value = "1";
-      await load();
 
       if (note) {
         note.hidden = false;
