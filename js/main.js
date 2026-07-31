@@ -23,15 +23,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function setupGuestName() {
   const params = new URLSearchParams(window.location.search);
-  const to = params.get("to") || params.get("n") || "";
+  const to = (params.get("to") || params.get("n") || "").trim();
   const guest = document.getElementById("guest-name");
+  const coverTo = document.getElementById("cover-to");
   const nameInput = document.getElementById("wish-name");
 
-  if (to && guest) {
-    guest.textContent = to;
-  }
-  if (to && nameInput) {
-    nameInput.value = to;
+  if (to) {
+    if (guest) guest.textContent = to;
+    if (coverTo) coverTo.hidden = false;
+    if (nameInput) nameInput.value = to;
+  } else if (coverTo) {
+    coverTo.hidden = true;
   }
 }
 
