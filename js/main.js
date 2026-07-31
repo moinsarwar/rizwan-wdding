@@ -1,7 +1,7 @@
 /* ===== Wedding config — edit these ===== */
 const WEDDING = {
-  date: new Date("2026-08-14T19:00:00"),
-  dateLabel: "14 – 16 August 2026",
+  date: new Date("2026-08-16T19:00:00"),
+  dateLabel: "Sunday, 16 August 2026 · 7:00 PM",
   storageKey: "rizwan-ayesha-wishes",
 };
 
@@ -93,7 +93,7 @@ function setupCountdown() {
 function setupNav() {
   const topnav = document.getElementById("topnav");
   const links = document.querySelectorAll(".bottomnav__link");
-  const sections = ["home", "couple", "events", "story", "wishes", "gift"]
+  const sections = ["home", "couple", "events", "wishes", "gift"]
     .map((id) => document.getElementById(id))
     .filter(Boolean);
 
@@ -240,21 +240,22 @@ function setupWishes() {
 }
 
 function setupCopy() {
-  const btn = document.getElementById("copy-account");
-  if (!btn) return;
-
-  btn.addEventListener("click", async () => {
-    const value = btn.dataset.copy || "";
-    try {
-      await navigator.clipboard.writeText(value);
+  document.querySelectorAll(".btn-copy").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const value = btn.dataset.copy || "";
       const prev = btn.textContent;
-      btn.textContent = "Copied!";
-      setTimeout(() => {
-        btn.textContent = prev;
-      }, 1600);
-    } catch {
-      btn.textContent = "Copy failed";
-    }
+      try {
+        await navigator.clipboard.writeText(value);
+        btn.textContent = "Copied";
+        btn.classList.add("is-copied");
+        setTimeout(() => {
+          btn.textContent = prev;
+          btn.classList.remove("is-copied");
+        }, 1600);
+      } catch {
+        btn.textContent = "Failed";
+      }
+    });
   });
 }
 
