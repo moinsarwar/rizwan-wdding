@@ -123,8 +123,92 @@ try {
         jsonResponse(['ok' => true]);
     }
 
+    if ($method === 'GET' && $action === 'links') {
+        $stmt = $db->query(
+            'SELECT id, guest_name, invite_url, created_at
+             FROM guest_links
+             ORDER BY created_at DESC'
+        );
+        jsonResponse(['ok' => true, 'data' => $stmt->fetchAll()]);
+    }
+
+    if ($method === 'POST' && $action === 'create-link') {
+        $body = readJsonBody();
+        $guestName = trim((string) ($body['guest_name'] ?? ''));
+        $guestName = preg_replace('/\s+/', ' ', $guestName) ?? '';
+
+        if ($guestName === '') {
+            jsonResponse(['ok' => false, 'error' => 'Guest name is required.'], 422);
+        }
+
+        if (strlen($guestName) > 160) {
+            jsonResponse(['ok' => false, 'error' => 'Guest name is too long.'], 422);
+        }
+
+        $appUrl = rtrim((string) env('APP_URL', 'https://rizwan-wedding.sytes.net'), '/');
+        $inviteUrl = $appUrl . '/?to=' . rawurlencode($guestName);
+
+        $existing = $db->prepare(
+            'SELECT id, guest_name, invite_url, created_at
+             FROM guest_links
+             WHERE guest_name = :guest_name
+             LIMIT 1'
+        );
+        $existing->execute([':guest_name' => $guestName]);
+        $row = $existing->fetch();
+
+        if ($row) {
+            jsonResponse([
+                'ok' => true,
+                'data' => $row,
+                'existing' => true,
+            ]);
+        }
+
+        $stmt = $db->prepare(
+            'INSERT INTO guest_links (guest_name, invite_url)
+             VALUES (:guest_name, :invite_url)'
+        );
+        $stmt->execute([
+            ':guest_name' => $guestName,
+            ':invite_url' => $inviteUrl,
+        ]);
+
+        $id = (int) $db->lastInsertId();
+        $fetch = $db->prepare(
+            'SELECT id, guest_name, invite_url, created_at
+             FROM guest_links WHERE id = :id'
+        );
+        $fetch->execute([':id' => $id]);
+
+        jsonResponse([
+            'ok' => true,
+            'data' => $fetch->fetch(),
+            'existing' => false,
+        ], 201);
+    }
+
+    if ($method === 'POST' && $action === 'delete-link') {
+        $body = readJsonBody();
+        $id = (int) ($body['id'] ?? 0);
+
+        if ($id < 1) {
+            jsonResponse(['ok' => false, 'error' => 'Invalid link id.'], 422);
+        }
+
+        $stmt = $db->prepare('DELETE FROM guest_links WHERE id = :id');
+        $stmt->execute([':id' => $id]);
+
+        if ($stmt->rowCount() === 0) {
+            jsonResponse(['ok' => false, 'error' => 'Link not found.'], 404);
+        }
+
+        jsonResponse(['ok' => true]);
+    }
+
     jsonResponse(['ok' => false, 'error' => 'Unknown action.'], 404);
 } catch (Throwable $e) {
+    error_log('[rizwan-admin] ' . $e->getMessage());
     jsonResponse([
         'ok' => false,
         'error' => 'Server error. Please check database settings.',

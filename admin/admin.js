@@ -2,6 +2,7 @@ const API = "/api/admin.php";
 
 let wishes = [];
 let filter = "all";
+let linksTable = null;
 
 const loginView = document.getElementById("login-view");
 const dashboardView = document.getElementById("dashboard-view");
@@ -9,6 +10,8 @@ const loginForm = document.getElementById("login-form");
 const loginError = document.getElementById("login-error");
 const board = document.getElementById("wishes-board");
 const stats = document.getElementById("stats");
+const createLinkForm = document.getElementById("create-link-form");
+const linkFormNote = document.getElementById("link-form-note");
 
 async function api(action, options = {}) {
   const url = action ? `${API}?action=${encodeURIComponent(action)}` : API;
@@ -77,13 +80,17 @@ function showDashboard() {
   dashboardView?.removeAttribute("hidden");
 }
 
+function whatsappUrl(guestName, inviteUrl) {
+  const text =
+    `Assalamu Alaikum ${guestName},\n\n` +
+    `You are invited to the Walima of Rizwan & Ayesha.\n` +
+    `Please open your invitation:\n${inviteUrl}`;
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
+
 function filteredWishes() {
-  if (filter === "pending") {
-    return wishes.filter((w) => !w.reply);
-  }
-  if (filter === "replied") {
-    return wishes.filter((w) => !!w.reply);
-  }
+  if (filter === "pending") return wishes.filter((w) => !w.reply);
+  if (filter === "replied") return wishes.filter((w) => !!w.reply);
   return wishes;
 }
 
@@ -93,7 +100,6 @@ function renderBoard() {
   if (stats) {
     stats.textContent = `${wishes.length} wishes · ${pending} pending`;
   }
-
   if (!board) return;
 
   if (!list.length) {
@@ -144,6 +150,79 @@ async function loadWishes() {
   renderBoard();
 }
 
+function initLinksTable() {
+  if (linksTable || !window.DataTable) return;
+
+  linksTable = new DataTable("#links-table", {
+    data: [],
+    columns: [
+      {
+        data: null,
+        render: (_data, _type, _row, meta) => meta.row + 1,
+        orderable: false,
+        width: "40px",
+      },
+      { data: "guest_name" },
+      {
+        data: "invite_url",
+        render: (url) =>
+          `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(url)}</a>`,
+      },
+      {
+        data: "created_at",
+        render: (value) => escapeHtml(formatDate(value)),
+      },
+      {
+        data: null,
+        orderable: false,
+        render: (row) => `
+          <div class="table-actions">
+            <button type="button" class="btn btn--ghost btn--small" data-copy-link="${escapeHtml(row.invite_url)}">Copy</button>
+            <a class="btn btn--primary btn--small" target="_blank" rel="noopener"
+               href="${whatsappUrl(row.guest_name, row.invite_url)}">WhatsApp</a>
+            <button type="button" class="btn btn--danger btn--small" data-delete-link="${row.id}">Delete</button>
+          </div>`,
+      },
+    ],
+    order: [[3, "desc"]],
+    pageLength: 10,
+    responsive: true,
+    language: {
+      search: "Search:",
+      emptyTable: "No invite links yet. Create one above.",
+    },
+  });
+}
+
+async function loadLinks() {
+  initLinksTable();
+  const data = await api("links");
+  const rows = data.data || [];
+  if (!linksTable) return;
+  linksTable.clear();
+  linksTable.rows.add(rows);
+  linksTable.draw();
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.classList.toggle("is-active", tab.dataset.tab === tabName);
+  });
+  document.getElementById("tab-wishes").hidden = tabName !== "wishes";
+  document.getElementById("tab-links").hidden = tabName !== "links";
+
+  if (tabName === "links") {
+    loadLinks().catch((err) => alert(err.message));
+  }
+}
+
+function showLinkNote(message, isError = false) {
+  if (!linkFormNote) return;
+  linkFormNote.hidden = false;
+  linkFormNote.textContent = message;
+  linkFormNote.style.color = isError ? "#9b3b3b" : "";
+}
+
 loginForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (loginError) loginError.hidden = true;
@@ -185,10 +264,16 @@ document.getElementById("logout-btn")?.addEventListener("click", async () => {
 
 document.getElementById("refresh-btn")?.addEventListener("click", async () => {
   try {
-    await loadWishes();
+    const active = document.querySelector(".tab.is-active")?.dataset.tab || "wishes";
+    if (active === "links") await loadLinks();
+    else await loadWishes();
   } catch (err) {
     alert(err.message);
   }
+});
+
+document.querySelectorAll(".tab").forEach((tab) => {
+  tab.addEventListener("click", () => switchTab(tab.dataset.tab || "wishes"));
 });
 
 document.querySelectorAll(".chip").forEach((chip) => {
@@ -235,6 +320,62 @@ board?.addEventListener("click", async (e) => {
     });
     wishes = wishes.filter((w) => Number(w.id) !== id);
     renderBoard();
+  } catch (err) {
+    alert(err.message);
+  }
+});
+
+createLinkForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const guestName = createLinkForm.guest_name.value.trim();
+  if (!guestName) return;
+
+  try {
+    const data = await api("create-link", {
+      method: "POST",
+      body: JSON.stringify({ guest_name: guestName }),
+    });
+    createLinkForm.reset();
+    await loadLinks();
+
+    const link = data.data?.invite_url || "";
+    if (data.existing) {
+      showLinkNote(`Link already exists: ${link}`);
+    } else {
+      showLinkNote(`Link created: ${link}`);
+    }
+  } catch (err) {
+    showLinkNote(err.message || "Could not create link", true);
+  }
+});
+
+document.getElementById("tab-links")?.addEventListener("click", async (e) => {
+  const copyBtn = e.target.closest("[data-copy-link]");
+  if (copyBtn) {
+    try {
+      await navigator.clipboard.writeText(copyBtn.dataset.copyLink || "");
+      copyBtn.textContent = "Copied";
+      setTimeout(() => {
+        copyBtn.textContent = "Copy";
+      }, 1200);
+    } catch {
+      alert("Copy failed");
+    }
+    return;
+  }
+
+  const deleteBtn = e.target.closest("[data-delete-link]");
+  if (!deleteBtn) return;
+
+  const id = Number(deleteBtn.dataset.deleteLink);
+  if (!confirm("Delete this invite link?")) return;
+
+  try {
+    await api("delete-link", {
+      method: "POST",
+      body: JSON.stringify({ id }),
+    });
+    await loadLinks();
   } catch (err) {
     alert(err.message);
   }

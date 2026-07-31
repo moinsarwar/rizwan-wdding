@@ -279,6 +279,110 @@ h1 {
   background: rgba(255, 255, 255, 0.6);
 }
 
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink-soft);
+  border-radius: 4px;
+  padding: 0.65rem 1rem;
+  font: inherit;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tab.is-active {
+  background: var(--emerald);
+  border-color: var(--emerald);
+  color: var(--white);
+}
+
+.tab-panel[hidden] {
+  display: none !important;
+}
+
+.link-form {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.link-form__fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.link-form label {
+  flex: 1 1 260px;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.link-form input {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+  background: var(--mist);
+  color: var(--ink);
+}
+
+.form-note {
+  margin: 0.75rem 0 0;
+  color: var(--emerald);
+  font-size: 0.9rem;
+  word-break: break-all;
+}
+
+.table-card {
+  padding: 1rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.btn--small {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.7rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+#links-table a {
+  color: var(--emerald);
+  word-break: break-all;
+}
+
+div.dt-container .dt-search input {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  font: inherit;
+}
+
 @media (max-width: 640px) {
   h1 {
     font-size: 1.6rem;

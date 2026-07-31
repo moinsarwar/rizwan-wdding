@@ -10,6 +10,10 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css"
+    />
     <link rel="stylesheet" href="admin.css" />
   </head>
   <body>
@@ -40,7 +44,7 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">Rizwan &amp; Ayesha</p>
-          <h1>Wishes Dashboard</h1>
+          <h1>Admin Dashboard</h1>
         </div>
         <div class="topbar__actions">
           <span id="stats" class="stats"></span>
@@ -54,21 +58,71 @@
       </header>
 
       <main class="content">
-        <div class="filters">
-          <button type="button" class="chip is-active" data-filter="all">
-            All
+        <div class="tabs">
+          <button type="button" class="tab is-active" data-tab="wishes">
+            Wishes
           </button>
-          <button type="button" class="chip" data-filter="pending">
-            Pending reply
-          </button>
-          <button type="button" class="chip" data-filter="replied">
-            Replied
+          <button type="button" class="tab" data-tab="links">
+            Invite Links
           </button>
         </div>
-        <div id="wishes-board" class="board"></div>
+
+        <section id="tab-wishes" class="tab-panel">
+          <div class="filters">
+            <button type="button" class="chip is-active" data-filter="all">
+              All
+            </button>
+            <button type="button" class="chip" data-filter="pending">
+              Pending reply
+            </button>
+            <button type="button" class="chip" data-filter="replied">
+              Replied
+            </button>
+          </div>
+          <div id="wishes-board" class="board"></div>
+        </section>
+
+        <section id="tab-links" class="tab-panel" hidden>
+          <form id="create-link-form" class="link-form">
+            <div class="link-form__fields">
+              <label>
+                Guest Name
+                <input
+                  type="text"
+                  name="guest_name"
+                  id="guest-name"
+                  placeholder="e.g. Mahad Khan Chugtai"
+                  required
+                  maxlength="160"
+                />
+              </label>
+              <button type="submit" class="btn btn--primary">
+                Create Link
+              </button>
+            </div>
+            <p id="link-form-note" class="form-note" hidden></p>
+          </form>
+
+          <div class="table-card">
+            <table id="links-table" class="display" style="width: 100%">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Guest Name</th>
+                  <th>Invite Link</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
       </main>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="admin.js"></script>
   </body>
 </html>
