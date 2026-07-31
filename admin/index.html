@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wishes Dashboard — Rizwan & Ayesha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <div id="login-view" class="login-view">
+      <form id="login-form" class="login-card">
+        <p class="eyebrow">Admin</p>
+        <h1>Wishes Dashboard</h1>
+        <p class="lead">Rizwan &amp; Ayesha wedding invitation</p>
+        <label>
+          Username
+          <input type="text" name="username" autocomplete="username" required />
+        </label>
+        <label>
+          Password
+          <input
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+        </label>
+        <button type="submit">Sign In</button>
+        <p id="login-error" class="error" hidden></p>
+      </form>
+    </div>
+
+    <div id="dashboard-view" class="dashboard" hidden>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Rizwan &amp; Ayesha</p>
+          <h1>Wishes Dashboard</h1>
+        </div>
+        <div class="topbar__actions">
+          <span id="stats" class="stats"></span>
+          <button type="button" id="refresh-btn" class="btn btn--ghost">
+            Refresh
+          </button>
+          <button type="button" id="logout-btn" class="btn btn--outline">
+            Logout
+          </button>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="filters">
+          <button type="button" class="chip is-active" data-filter="all">
+            All
+          </button>
+          <button type="button" class="chip" data-filter="pending">
+            Pending reply
+          </button>
+          <button type="button" class="chip" data-filter="replied">
+            Replied
+          </button>
+        </div>
+        <div id="wishes-board" class="board"></div>
+      </main>
+    </div>
+
+    <script src="admin.js"></script>
+  </body>
+</html>

@@ -858,6 +858,23 @@ textarea {
   color: var(--ink-soft);
 }
 
+.wish-card__reply {
+  margin-top: 0.85rem !important;
+  padding: 0.85rem 1rem;
+  background: var(--mist);
+  border-left: 3px solid var(--gold);
+  text-align: left;
+}
+
+.wish-card__reply span {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 .wish-empty {
   text-align: center;
   color: var(--ink-soft);
