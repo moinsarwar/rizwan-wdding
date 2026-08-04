@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/Database.php';
+define('SKIP_ADMIN_SESSION', true);
 
-// Public endpoint — no admin session needed
-if (session_status() === PHP_SESSION_ACTIVE) {
-    // ignore; bootstrap may have started one
-}
+require_once __DIR__ . '/Database.php';
 
 corsHeaders();
 
