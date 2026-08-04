@@ -13,6 +13,59 @@ function requireAdmin(): void
     }
 }
 
+function generateUuid(): string
+{
+    $data = random_bytes(16);
+    $data[6] = chr((ord($data[6]) & 0x0f) | 0x40);
+    $data[8] = chr((ord($data[8]) & 0x3f) | 0x80);
+
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+}
+
+function inviteUrlForUuid(string $uuid): string
+{
+    $appUrl = rtrim((string) env('APP_URL', 'https://rizwan-wedding.sytes.net'), '/');
+
+    return $appUrl . '/?g=' . rawurlencode($uuid);
+}
+
+function ensureGuestLinkUuid(PDO $db, array $row): array
+{
+    if (!empty($row['uuid'])) {
+        $expected = inviteUrlForUuid((string) $row['uuid']);
+        if (($row['invite_url'] ?? '') !== $expected) {
+            $upd = $db->prepare(
+                'UPDATE guest_links SET invite_url = :invite_url WHERE id = :id'
+            );
+            $upd->execute([
+                ':invite_url' => $expected,
+                ':id' => (int) $row['id'],
+            ]);
+            $row['invite_url'] = $expected;
+        }
+
+        return $row;
+    }
+
+    $uuid = generateUuid();
+    $inviteUrl = inviteUrlForUuid($uuid);
+    $upd = $db->prepare(
+        'UPDATE guest_links
+         SET uuid = :uuid, invite_url = :invite_url
+         WHERE id = :id'
+    );
+    $upd->execute([
+        ':uuid' => $uuid,
+        ':invite_url' => $inviteUrl,
+        ':id' => (int) $row['id'],
+    ]);
+
+    $row['uuid'] = $uuid;
+    $row['invite_url'] = $inviteUrl;
+
+    return $row;
+}
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $action = $_GET['action'] ?? '';
 
@@ -125,11 +178,16 @@ try {
 
     if ($method === 'GET' && $action === 'links') {
         $stmt = $db->query(
-            'SELECT id, guest_name, invite_url, created_at
+            'SELECT id, uuid, guest_name, invite_url, created_at
              FROM guest_links
              ORDER BY created_at DESC'
         );
-        jsonResponse(['ok' => true, 'data' => $stmt->fetchAll()]);
+        $rows = $stmt->fetchAll();
+        $rows = array_map(
+            fn (array $row): array => ensureGuestLinkUuid($db, $row),
+            $rows
+        );
+        jsonResponse(['ok' => true, 'data' => $rows]);
     }
 
     if ($method === 'POST' && $action === 'create-link') {
@@ -145,11 +203,8 @@ try {
             jsonResponse(['ok' => false, 'error' => 'Guest name is too long.'], 422);
         }
 
-        $appUrl = rtrim((string) env('APP_URL', 'https://rizwan-wedding.sytes.net'), '/');
-        $inviteUrl = $appUrl . '/?to=' . rawurlencode($guestName);
-
         $existing = $db->prepare(
-            'SELECT id, guest_name, invite_url, created_at
+            'SELECT id, uuid, guest_name, invite_url, created_at
              FROM guest_links
              WHERE guest_name = :guest_name
              LIMIT 1'
@@ -158,6 +213,7 @@ try {
         $row = $existing->fetch();
 
         if ($row) {
+            $row = ensureGuestLinkUuid($db, $row);
             jsonResponse([
                 'ok' => true,
                 'data' => $row,
@@ -165,18 +221,22 @@ try {
             ]);
         }
 
+        $uuid = generateUuid();
+        $inviteUrl = inviteUrlForUuid($uuid);
+
         $stmt = $db->prepare(
-            'INSERT INTO guest_links (guest_name, invite_url)
-             VALUES (:guest_name, :invite_url)'
+            'INSERT INTO guest_links (uuid, guest_name, invite_url)
+             VALUES (:uuid, :guest_name, :invite_url)'
         );
         $stmt->execute([
+            ':uuid' => $uuid,
             ':guest_name' => $guestName,
             ':invite_url' => $inviteUrl,
         ]);
 
         $id = (int) $db->lastInsertId();
         $fetch = $db->prepare(
-            'SELECT id, guest_name, invite_url, created_at
+            'SELECT id, uuid, guest_name, invite_url, created_at
              FROM guest_links WHERE id = :id'
         );
         $fetch->execute([':id' => $id]);

@@ -16,22 +16,46 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCountdown();
   setupNav();
   setupReveal();
-  setupWishes();
-  setupCopy();
   setupToTop();
 });
 
 function setupGuestName() {
   const params = new URLSearchParams(window.location.search);
-  const to = (params.get("to") || params.get("n") || "").trim();
+  const inviteId = (params.get("g") || params.get("invite") || "").trim();
+  const legacyTo = (params.get("to") || params.get("n") || "").trim();
   const guest = document.getElementById("guest-name");
   const coverTo = document.getElementById("cover-to");
-  const nameInput = document.getElementById("wish-name");
 
-  if (to) {
-    if (guest) guest.textContent = to;
+  const showName = (name) => {
+    const value = (name || "").trim();
+    if (!value) {
+      if (coverTo) coverTo.hidden = true;
+      return;
+    }
+    if (guest) guest.textContent = value;
     if (coverTo) coverTo.hidden = false;
-    if (nameInput) nameInput.value = to;
+  };
+
+  if (inviteId) {
+    fetch(`api/guest.php?g=${encodeURIComponent(inviteId)}`, {
+      headers: { Accept: "application/json" },
+    })
+      .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        if (ok && data?.ok && data.guest_name) {
+          showName(data.guest_name);
+        } else if (coverTo) {
+          coverTo.hidden = true;
+        }
+      })
+      .catch(() => {
+        if (coverTo) coverTo.hidden = true;
+      });
+    return;
+  }
+
+  if (legacyTo) {
+    showName(legacyTo);
   } else if (coverTo) {
     coverTo.hidden = true;
   }
@@ -94,7 +118,7 @@ function setupCountdown() {
 function setupNav() {
   const topnav = document.getElementById("topnav");
   const links = document.querySelectorAll(".bottomnav__link");
-  const sections = ["home", "couple", "events", "wishes", "gift"]
+  const sections = ["home", "events"]
     .map((id) => document.getElementById(id))
     .filter(Boolean);
 
@@ -140,85 +164,6 @@ function setupReveal() {
   );
 
   items.forEach((el) => observer.observe(el));
-}
-
-function setupWishes() {
-  const form = document.getElementById("wish-form");
-  const note = document.getElementById("form-note");
-
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const name = form.name.value.trim();
-    const message = form.message.value.trim();
-    const guests = Number(form.guests.value) || 1;
-    const rsvp = form.rsvp.value;
-
-    if (!name || !message) {
-      if (note) {
-        note.hidden = false;
-        note.textContent = "Please enter your name and message.";
-        note.style.color = "#9b3b3b";
-      }
-      return;
-    }
-
-    const submitBtn = form.querySelector('button[type="submit"]');
-    if (submitBtn) submitBtn.disabled = true;
-
-    try {
-      const res = await fetch("api/wishes.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ name, message, guests, rsvp }),
-      });
-      const data = await res.json();
-
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Could not save wish");
-      }
-
-      form.reset();
-      form.guests.value = "1";
-
-      if (note) {
-        note.hidden = false;
-        note.textContent = "JazakAllah khair — your wish has been received.";
-        note.style.color = "";
-      }
-    } catch (err) {
-      if (note) {
-        note.hidden = false;
-        note.textContent = err.message || "Could not save wish. Please try again.";
-        note.style.color = "#9b3b3b";
-      }
-    } finally {
-      if (submitBtn) submitBtn.disabled = false;
-    }
-  });
-}
-
-function setupCopy() {
-  document.querySelectorAll(".btn-copy").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const value = btn.dataset.copy || "";
-      const prev = btn.textContent;
-      try {
-        await navigator.clipboard.writeText(value);
-        btn.textContent = "Copied";
-        btn.classList.add("is-copied");
-        setTimeout(() => {
-          btn.textContent = prev;
-          btn.classList.remove("is-copied");
-        }, 1600);
-      } catch {
-        btn.textContent = "Failed";
-      }
-    });
-  });
 }
 
 function setupToTop() {

@@ -50,9 +50,7 @@
       <a href="#home" class="topnav__brand">Rizwan weds Ayesha</a>
       <nav class="topnav__links" aria-label="Primary">
         <a href="#home">Home</a>
-        <a href="#couple">Couple</a>
         <a href="#events">Event</a>
-        <a href="#wishes">Wishes</a>
       </nav>
     </header>
 
@@ -95,48 +93,9 @@
             </div>
           </div>
         </div>
-        <a href="#couple" class="hero__scroll" aria-label="Scroll to couple">
+        <a href="#events" class="hero__scroll" aria-label="Scroll to event">
           <span></span>
         </a>
-      </section>
-
-      <!-- Couple -->
-      <section id="couple" class="section couple">
-        <div class="container">
-          <p class="section__eyebrow">With the blessing of Allah</p>
-          <h2 class="section__title">The Couple</h2>
-          <p class="section__lead">
-            Together with their families, request the honour of your presence.
-          </p>
-
-          <div class="couple__grid couple__grid--names">
-            <article class="person reveal">
-              <p class="person__role">The Groom</p>
-              <h3 class="person__name">Muhammad Rizwan Arshad</h3>
-              <p class="person__parents">
-                Son of<br />
-                <strong>Mr. &amp; Mrs. Arshad</strong>
-              </p>
-            </article>
-
-            <div class="couple__heart" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-                <path
-                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                />
-              </svg>
-            </div>
-
-            <article class="person reveal">
-              <p class="person__role">The Bride</p>
-              <h3 class="person__name">Ayesha Yousaf</h3>
-              <p class="person__parents">
-                Daughter of<br />
-                <strong>Mr. &amp; Mrs. Yousaf</strong>
-              </p>
-            </article>
-          </div>
-        </div>
       </section>
 
       <!-- Events -->
@@ -148,11 +107,12 @@
             We would be honoured by your presence at our Reception.
           </p>
 
-          <div class="events__grid events__grid--single">
-            <article class="event-card reveal">
-              <p class="event-card__label">Wedding Event</p>
-              <h3 class="event-card__title">Reception</h3>
-              <ul class="event-card__meta">
+          <article class="reception reveal">
+            <div class="reception__details">
+              <p class="reception__label">Wedding Event</p>
+              <h3 class="reception__title">Reception</h3>
+
+              <ul class="reception__meta">
                 <li>
                   <span>Date</span>
                   <strong>Sunday, 16 August 2026</strong>
@@ -165,8 +125,24 @@
                   <span>Venue</span>
                   <strong>Rivaj Marque</strong>
                 </li>
+                <li>
+                  <span>Address</span>
+                  <strong>Canal Rd, Qasim Bela</strong>
+                </li>
               </ul>
-              <div class="event-card__map">
+
+              <a
+                class="btn btn--outline reception__maps-btn"
+                href="https://maps.app.goo.gl/EoSqMKJwAgEKK4Fd7"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open in Google Maps
+              </a>
+            </div>
+
+            <div class="reception__location">
+              <div class="reception__map">
                 <iframe
                   title="Reception venue — Rivaj Marque"
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d215.5364558596095!2d71.4065037167226!3d30.191895358683688!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x393b330035f97d11%3A0x957143590ad08eba!2sRivaj%20Marque!5e0!3m2!1sen!2s!4v1785497154416!5m2!1sen!2s"
@@ -175,138 +151,29 @@
                   allowfullscreen
                 ></iframe>
               </div>
-            </article>
-          </div>
-        </div>
-      </section>
 
-      <!-- Wishes / RSVP -->
-      <section id="wishes" class="section wishes">
-        <div class="container container--narrow">
-          <p class="section__eyebrow">With love</p>
-          <h2 class="section__title">Send Your Wishes</h2>
-          <p class="section__lead">
-            Leave a prayer or kind word for the couple. Confirm your presence
-            below.
-          </p>
-
-          <form id="wish-form" class="wish-form reveal" novalidate>
-            <div class="form-row">
-              <label for="wish-name">Your Name</label>
-              <input
-                type="text"
-                id="wish-name"
-                name="name"
-                required
-                autocomplete="name"
-                placeholder="Enter your name"
-              />
+              <aside class="reception__qr">
+                <a
+                  class="reception__qr-link"
+                  href="https://maps.app.goo.gl/EoSqMKJwAgEKK4Fd7"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open Rivaj Marque location in Google Maps"
+                >
+                  <img
+                    src="assets/rivaj-marque-qr.png"
+                    alt="QR code for Rivaj Marque location on Google Maps"
+                    width="180"
+                    height="180"
+                  />
+                </a>
+                <p class="reception__qr-title">Scan for location</p>
+                <p class="reception__qr-text">
+                  Rivaj Marque, Canal Rd, Qasim Bela
+                </p>
+              </aside>
             </div>
-            <div class="form-row form-row--split">
-              <div>
-                <label for="wish-guests">Guests</label>
-                <input
-                  type="number"
-                  id="wish-guests"
-                  name="guests"
-                  min="1"
-                  max="10"
-                  value="1"
-                />
-              </div>
-              <div>
-                <label for="wish-rsvp">Attendance</label>
-                <select id="wish-rsvp" name="rsvp" required>
-                  <option value="attending">Joyfully Attending</option>
-                  <option value="maybe">Hopefully Attending</option>
-                  <option value="declined">Unable to Attend</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row">
-              <label for="wish-message">Message</label>
-              <textarea
-                id="wish-message"
-                name="message"
-                rows="4"
-                required
-                placeholder="Write your prayers and wishes…"
-              ></textarea>
-            </div>
-            <button type="submit" class="btn btn--primary btn--full">
-              Send Wish
-            </button>
-            <p class="form-note" id="form-note" hidden></p>
-          </form>
-        </div>
-      </section>
-
-      <!-- Gift -->
-      <section id="gift" class="section gift">
-        <div class="container container--narrow">
-          <p class="section__eyebrow">Optional</p>
-          <h2 class="section__title">Wedding Gift</h2>
-          <p class="section__lead">
-            Your presence is the greatest gift. If you wish to send a token of
-            love, you may use the details below.
-          </p>
-
-          <div class="gift-card reveal">
-            <p class="gift-card__bank">HBL Bank Transfer</p>
-            <p class="gift-card__name">RIZWAN ARSHAD</p>
-
-            <div class="gift-card__body">
-              <div class="gift-card__qr">
-                <img
-                  src="assets/hbl-raast-qr.png"
-                  alt="HBL Raast QR code for RIZWAN ARSHAD"
-                  width="220"
-                  height="220"
-                />
-                <p class="gift-card__qr-label">Scan to pay via Raast / HBL</p>
-              </div>
-
-              <ul class="gift-card__details">
-                <li>
-                  <span>Account Title</span>
-                  <strong>RIZWAN ARSHAD</strong>
-                </li>
-                <li>
-                  <span>Account Number</span>
-                  <strong id="account-number">02117992482303</strong>
-                  <button
-                    type="button"
-                    class="btn-copy"
-                    data-copy="02117992482303"
-                  >
-                    Copy
-                  </button>
-                </li>
-                <li>
-                  <span>IBAN</span>
-                  <strong id="iban-number">PK48HABB0002117992482303</strong>
-                  <button
-                    type="button"
-                    class="btn-copy"
-                    data-copy="PK48HABB0002117992482303"
-                  >
-                    Copy
-                  </button>
-                </li>
-                <li>
-                  <span>Raast ID</span>
-                  <strong id="raast-id">03146869050</strong>
-                  <button
-                    type="button"
-                    class="btn-copy"
-                    data-copy="03146869050"
-                  >
-                    Copy
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </div>
+          </article>
         </div>
       </section>
     </main>
@@ -329,14 +196,6 @@
         </svg>
         <span>Home</span>
       </a>
-      <a href="#couple" class="bottomnav__link" data-section="couple">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-          <path
-            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-          />
-        </svg>
-        <span>Couple</span>
-      </a>
       <a href="#events" class="bottomnav__link" data-section="events">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
           <path
@@ -344,22 +203,6 @@
           />
         </svg>
         <span>Event</span>
-      </a>
-      <a href="#wishes" class="bottomnav__link" data-section="wishes">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-          <path
-            d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"
-          />
-        </svg>
-        <span>Wishes</span>
-      </a>
-      <a href="#gift" class="bottomnav__link" data-section="gift">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-          <path
-            d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"
-          />
-        </svg>
-        <span>Gift</span>
       </a>
     </nav>
 
