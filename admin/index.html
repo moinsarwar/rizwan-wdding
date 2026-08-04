@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard — Rizwan weds Ayesha</title>
+    <title>Invite Links — Rizwan weds Ayesha</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,7 +20,7 @@
     <div id="login-view" class="login-view">
       <form id="login-form" class="login-card">
         <p class="eyebrow">Admin</p>
-        <h1>Wishes Dashboard</h1>
+        <h1>Invite Links</h1>
         <p class="lead">Rizwan weds Ayesha wedding invitation</p>
         <label>
           Username
@@ -44,7 +44,7 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">Rizwan weds Ayesha</p>
-          <h1>Admin Dashboard</h1>
+          <h1>Invite Links</h1>
         </div>
         <div class="topbar__actions">
           <span id="stats" class="stats"></span>
@@ -58,31 +58,7 @@
       </header>
 
       <main class="content">
-        <div class="tabs">
-          <button type="button" class="tab is-active" data-tab="wishes">
-            Wishes
-          </button>
-          <button type="button" class="tab" data-tab="links">
-            Invite Links
-          </button>
-        </div>
-
-        <section id="tab-wishes" class="tab-panel">
-          <div class="filters">
-            <button type="button" class="chip is-active" data-filter="all">
-              All
-            </button>
-            <button type="button" class="chip" data-filter="pending">
-              Pending reply
-            </button>
-            <button type="button" class="chip" data-filter="replied">
-              Replied
-            </button>
-          </div>
-          <div id="wishes-board" class="board"></div>
-        </section>
-
-        <section id="tab-links" class="tab-panel" hidden>
+        <section id="tab-links" class="tab-panel">
           <form id="create-link-form" class="link-form">
             <div class="link-form__fields">
               <label>
@@ -91,7 +67,7 @@
                   type="text"
                   name="guest_name"
                   id="guest-name"
-                  placeholder="e.g. Mahad Khan Chugtai"
+                  placeholder="e.g. Moin Sarwar"
                   required
                   maxlength="160"
                 />

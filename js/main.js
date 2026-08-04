@@ -27,37 +27,49 @@ function setupGuestName() {
   const coverTo = document.getElementById("cover-to");
 
   const showName = (name) => {
-    const value = (name || "").trim();
+    const value = String(name || "").trim();
     if (!value) {
-      if (coverTo) coverTo.hidden = true;
+      if (coverTo) {
+        coverTo.hidden = true;
+        coverTo.setAttribute("hidden", "");
+      }
       return;
     }
     if (guest) guest.textContent = value;
-    if (coverTo) coverTo.hidden = false;
+    if (coverTo) {
+      coverTo.hidden = false;
+      coverTo.removeAttribute("hidden");
+    }
   };
 
   if (inviteId) {
-    fetch(`api/guest.php?g=${encodeURIComponent(inviteId)}`, {
+    fetch(`/api/guest.php?g=${encodeURIComponent(inviteId)}`, {
+      method: "GET",
       headers: { Accept: "application/json" },
+      credentials: "same-origin",
+      cache: "no-store",
     })
-      .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+      .then(async (res) => {
+        const data = await res.json().catch(() => null);
+        return { ok: res.ok, data };
+      })
       .then(({ ok, data }) => {
-        if (ok && data?.ok && data.guest_name) {
+        if (ok && data && data.ok && data.guest_name) {
           showName(data.guest_name);
-        } else if (coverTo) {
-          coverTo.hidden = true;
+          return;
         }
+        showName("");
       })
       .catch(() => {
-        if (coverTo) coverTo.hidden = true;
+        showName("");
       });
     return;
   }
 
   if (legacyTo) {
     showName(legacyTo);
-  } else if (coverTo) {
-    coverTo.hidden = true;
+  } else {
+    showName("");
   }
 }
 

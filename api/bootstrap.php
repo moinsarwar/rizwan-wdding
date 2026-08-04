@@ -85,7 +85,7 @@ loadEnv(dirname(__DIR__) . '/.env');
 
 date_default_timezone_set('Asia/Karachi');
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
+if (!defined('SKIP_ADMIN_SESSION') && session_status() !== PHP_SESSION_ACTIVE) {
     session_name('rizwan_admin');
     session_start([
         'cookie_httponly' => true,
