@@ -12,7 +12,7 @@ define('SKIP_ADMIN_SESSION', true);
 require_once __DIR__ . '/api/Database.php';
 
 $siteUrl = rtrim((string) env('APP_URL', 'https://rizwan-wedding.sytes.net'), '/');
-$ogImage = $siteUrl . '/assets/og-cover.jpg';
+$ogImage = $siteUrl . '/assets/og-cover.jpg?v=2';
 
 $guestName = '';
 $uuid = trim((string) ($_GET['g'] ?? $_GET['invite'] ?? ''));
