@@ -71,7 +71,7 @@ $shareMeta = <<<HTML
     <meta name="twitter:image" content="{$e($ogImage)}" />
 HTML;
 
-$html = file_get_contents(__DIR__ . '/index.html');
+$html = file_get_contents(__DIR__ . '/invitation.html');
 if ($html === false) {
     http_response_code(500);
     echo 'Invitation unavailable.';
